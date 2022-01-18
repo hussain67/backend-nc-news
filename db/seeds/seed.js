@@ -1,7 +1,9 @@
 const db = require("../connection");
+const format = require("pg-format");
+const { formatTopicData, formatUserData, formatArticleData, formatCommentData } = require("../../utils/seed-formatting");
 const seed = data => {
   const { articleData, commentData, topicData, userData } = data;
-  // 1. create tables
+
   return db
     .query(`DROP TABLE IF EXISTS comments`)
     .then(() => {
@@ -20,37 +22,91 @@ const seed = data => {
     );`);
     })
     .then(() => {
+      const formatedTopics = formatTopicData(topicData);
+      const insertTopics = format(
+        `
+      INSERT INTO topics
+      (slug, description)
+      VALUES
+      %L
+      RETURNING *
+      `,
+        formatedTopics
+      );
+      return db.query(insertTopics);
+    })
+    .then(() => {
       return db.query(`CREATE TABLE users (
-      username VARCHAR(60) UNIQUE PRIMARY KEY,
-      avatar_url TEXT,
+      username VARCHAR(30) UNIQUE PRIMARY KEY,
+      avatar_url TEXT NOT NULL,
       name TEXT NOT NULL
-
       );`);
     })
     .then(() => {
+      const formattedUsers = formatUserData(userData);
+      const insertUsers = format(
+        `
+      INSERT INTO users
+      (username, avatar_url, name)
+      VALUES
+      %L
+      RETURNING *
+      `,
+        formattedUsers
+      );
+      return db.query(insertUsers);
+    })
+
+    .then(() => {
       return db.query(`CREATE TABLE articles (
         article_id SERIAL PRIMARY KEY,
-        title VARCHAR(60) NOT NULL,
+        title VARCHAR(100) NOT NULL,
         body TEXT NOT NULL,
-        votes INT DEFAULT 0,
-        topic TEXT REFERENCES topics(slug),
-        author VARCHAR(60) REFERENCES users(username),
-        created_at TIMESTAMP DEFAULT NOW()
+        votes INT DEFAULT 0 NOT NULL,
+        topic TEXT REFERENCES topics(slug) NOT NULL,
+        author VARCHAR(60) REFERENCES users(username) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL
       );`);
+    })
+    .then(() => {
+      const formattedArticles = formatArticleData(articleData);
+      const insertArticles = format(
+        `
+      INSERT INTO articles
+      (title, body, votes, topic, author, created_at)
+      VALUES
+      %L
+      RETURNING *
+      `,
+        formattedArticles
+      );
+      return db.query(insertArticles);
     })
     .then(() => {
       return db.query(`CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
-        author VARCHAR(60) REFERENCES users(username),
-        votes INT DEFAULT 0,
-        created_at TIMESTAMP DEFAULT NOW(),
+        author VARCHAR(60) REFERENCES users(username) NOT NULL,
+        article_id INT REFERENCES articles(article_id) NOT NULL,
+        votes INT DEFAULT 0 NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         body TEXT NOT NULL
 
-
       );`);
+    })
+    .then(() => {
+      const formattedComments = formatCommentData(commentData);
+      const insertComments = format(
+        `
+      INSERT INTO comments
+      (author, article_id, votes, created_at, body)
+      VALUES
+      %L
+      RETURNING *
+      `,
+        formattedComments
+      );
+      return db.query(insertComments);
     });
-
-  // 2. insert data
 };
 
 module.exports = seed;
