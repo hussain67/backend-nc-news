@@ -57,8 +57,8 @@ describe("/api/articles/:article_id", () => {
             votes: expect.any(Number),
             topic: expect.any(String),
             author: expect.any(String),
-            author: expect.any(String),
-            created_at: expect.any(String)
+            created_at: expect.any(String),
+            comment_count: expect.any(String)
           });
         });
     });
@@ -79,21 +79,39 @@ describe("/api/articles/:article_id", () => {
         });
     });
   });
-  /*
+
   describe("PATCH", () => {
     test("Return status: 200", () => {
       return request(app)
-        .patch("api/articles/2")
-        .send({ inc_votes: newVote })
+        .patch("/api/articles/3")
+        .send({ inc_votes: 10 })
         .expect(200)
         .then(res => {
-          expect(res.body.article).toEqual({
-            article_id: 1,
+          let result = res.body.article;
+          formattedResult = { article_id: result.article_id, votes: result.votes };
+          expect(formattedResult).toEqual({
+            article_id: 3,
             votes: 10
           });
         });
     });
-  }); */
+    test("Return status: 400 and an error message for invalid id", () => {
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).toBe("You entered an invalid id");
+        });
+    });
+    test("Return status: 404 and error message for id that does not exists ", () => {
+      return request(app)
+        .patch("/api/articles/200")
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).toBe("No article found with article_id: 200");
+        });
+    });
+  });
 });
 describe("/api/comments/:comment_id", () => {
   describe("DELETE", () => {
