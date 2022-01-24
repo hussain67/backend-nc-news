@@ -1,9 +1,18 @@
 const { selectArticles, selectArticleById, updateArticleById } = require("../models/article.model");
 
 exports.getArticles = (req, res, next) => {
-  selectArticles().then(articles => {
-    res.status(200).send({ articles });
-  });
+  //const { sort_by } = req.query;
+  selectArticles(req.query)
+    .then(articles => {
+      if (articles.length > 0) {
+        res.status(200).send({ articles });
+      } else {
+        return Promise.reject({ status: 400, msg: "Not Found" });
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 };
 
 exports.getArticleById = (req, res, next) => {

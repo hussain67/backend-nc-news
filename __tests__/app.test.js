@@ -3,7 +3,6 @@ const testData = require("../db/data/test-data/index.js");
 const seed = require("../db/seeds/seed.js");
 const request = require("supertest");
 const app = require("../app");
-//const { get } = require("superagent");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -29,7 +28,7 @@ describe("/api/topics", () => {
 });
 describe("/api/articles", () => {
   describe("GET", () => {
-    test("status:200 and return an array of articles", () => {
+    test(" Return status:200 and return an array of articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -38,8 +37,51 @@ describe("/api/articles", () => {
           expect(res.body.articles).toHaveLength(12);
         });
     });
+
+    test("Return status: 200 and articles are sorted by passed query, descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id")
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).toBeSortedBy("article_id", { descending: true });
+        });
+    });
+    test("Return status: 200 and articles are sorted by passed query, ascending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=ASC")
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).toBeSortedBy("article_id");
+        });
+    });
+    test("Return status: 400 and an error message for invalid query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=ASCC")
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).toBe("Not Found");
+        });
+    });
+
+    test("Return status: 200 and topics for correct topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(res => {
+          res.body.articles.forEach(el => {
+            expect(el.topic).toBe("mitch");
+          });
+        });
+    });
+    test("Return status: 400 and a error message for incorrect topic", () => {
+      return request(app)
+        .get("/api/articles?topic=nonExistant")
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).toBe("Not Found");
+        });
+    });
   });
-  test("200:", () => {});
 });
 
 describe("/api/articles/:article_id", () => {
