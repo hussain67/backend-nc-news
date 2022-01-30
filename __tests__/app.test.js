@@ -109,7 +109,7 @@ describe("/api/articles/:article_id", () => {
         .get("/api/articles/invalid_id")
         .expect(400)
         .then(res => {
-          expect(res.body.msg).toBe("You entered an invalid id");
+          expect(res.body.msg).toBe("Bad Request");
         });
     });
     test("Return status: 404 and error message for id that does not exists ", () => {
@@ -142,15 +142,77 @@ describe("/api/articles/:article_id", () => {
         .patch("/api/articles/invalid_id")
         .expect(400)
         .then(res => {
-          expect(res.body.msg).toBe("You entered an invalid id");
+          expect(res.body.msg).toBe("Bad Request");
         });
     });
     test("Return status: 404 and error message for id that does not exists ", () => {
       return request(app)
-        .patch("/api/articles/200")
+        .patch("/api/articles/700")
         .expect(404)
         .then(res => {
-          expect(res.body.msg).toBe("No article found with article_id: 200");
+          expect(res.body.msg).toBe("No article found with article_id: 700");
+        });
+    });
+  });
+});
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("Return status 200 and comments ", () => {
+      return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(res => {
+          let arr = res.body.comments;
+          expect(arr).toBeInstanceOf(Array);
+          expect(arr).toHaveLength(2);
+          arr.forEach(comment => {
+            expect(comment).toMatchObject({
+              comment_id: expect.any(Number),
+              author: expect.any(String),
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+              body: expect.any(String)
+            });
+          });
+        });
+    });
+  });
+  describe("POST", () => {
+    test("Return status: 201 & created post", () => {
+      return request(app)
+        .post("/api/articles/9/comments")
+        .send({
+          username: "butter_bridge",
+          body: "excellent"
+        })
+        .expect(201)
+        .then(res => {
+          let obj = res.body.post;
+          expect(obj.author).toBe("butter_bridge");
+          expect(obj.body).toBe("excellent");
+          expect(obj.comment_id).toBe(19);
+        });
+    });
+    test("MISSING FIELD, Return status: 400 & error message", () => {
+      return request(app)
+        .post("/api/articles/9/comments")
+        .send({
+          username: "butter_bridge"
+        })
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).toBe("Bad Request");
+        });
+    });
+    test("INVALID FIELD, Return status: 400 & error message", () => {
+      return request(app)
+        .post("/api/articles/9/comments")
+        .send({
+          username_author: "butter_bridge"
+        })
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).toBe("Bad Request");
         });
     });
   });

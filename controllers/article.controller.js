@@ -7,7 +7,7 @@ exports.getArticles = (req, res, next) => {
       if (articles.length > 0) {
         res.status(200).send({ articles });
       } else {
-        return Promise.reject({ status: 400, msg: "Not Found" });
+        return Promise.reject({ status: 400, msg: "Not Found" }); //CHECK
       }
     })
     .catch(err => {
