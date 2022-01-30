@@ -2,18 +2,7 @@ exports.formatTopicData = topicData => {
   const formattedTopics = topicData.map(topic => [topic.slug, topic.description]);
   return formattedTopics;
 };
-/*
 
-exports.formatAllowedTopics = topicData => {
-  const formattedAllowedTopics = [];
-  topicData.forEach(topic => {
-    if (!formattedAllowedTopics.includes(topic.slug)) {
-      formattedAllowedTopics.push(topic.slug);
-    }
-  });
-  return formattedAllowedTopics;
-};
-*/
 exports.formatUserData = userData => {
   const formattedUsers = userData.map(user => [user.username, user.avatar_url, user.name]);
   return formattedUsers;

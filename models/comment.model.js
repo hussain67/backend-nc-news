@@ -2,7 +2,6 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 exports.selectCommentsByArticleId = article_id => {
-  //console.log(article_id);
   return db
     .query(
       `
@@ -12,7 +11,6 @@ WHERE article_id = $1
       [article_id]
     )
     .then(result => {
-      console.log(result.rows);
       return result.rows;
     });
 };
@@ -46,7 +44,6 @@ exports.insertCommentById = (article_id, username, body) => {
   );
 
   return db.query(insertComments).then(result => {
-    //console.log(res.rows);
     return result.rows[0];
   });
 };

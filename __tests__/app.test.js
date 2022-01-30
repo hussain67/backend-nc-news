@@ -35,6 +35,16 @@ describe("/api/articles", () => {
         .then(res => {
           expect(res.body.articles).toBeInstanceOf(Array);
           expect(res.body.articles).toHaveLength(12);
+          res.body.articles.forEach(article => {
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              body: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              comment_count: expect.any(String)
+            });
+          });
         });
     });
 
@@ -48,7 +58,7 @@ describe("/api/articles", () => {
     });
     test("Return status: 200 and articles are sorted by passed query, ascending order", () => {
       return request(app)
-        .get("/api/articles?sort_by=article_id&order=ASC")
+        .get("/api/articles?sort_by=article_id&order_by=ASC")
         .expect(200)
         .then(res => {
           expect(res.body.articles).toBeSortedBy("article_id");
@@ -56,10 +66,10 @@ describe("/api/articles", () => {
     });
     test("Return status: 400 and an error message for invalid query", () => {
       return request(app)
-        .get("/api/articles?sort_by=article_id&order=ASCC")
+        .get("/api/articles?sort_by=article_id&order_by=ASCC")
         .expect(400)
         .then(res => {
-          expect(res.body.msg).toBe("Not Found");
+          expect(res.body.msg).toBe("Bad Request");
         });
     });
 
@@ -78,7 +88,7 @@ describe("/api/articles", () => {
         .get("/api/articles?topic=nonExistant")
         .expect(400)
         .then(res => {
-          expect(res.body.msg).toBe("Not Found");
+          expect(res.body.msg).toBe("Bad Request");
         });
     });
   });
