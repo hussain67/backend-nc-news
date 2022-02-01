@@ -3,11 +3,13 @@ const app = express();
 
 app.use(express.json());
 
+const api = require("./routes/api.route");
 const topics = require("./routes/topics.route");
 const comments = require("./routes/comments.route");
 const articles = require("./routes/articles.route");
 
 const { handleInvalidUrlErrors, handleServerErrors, handlePsqlErrors, handleCustomErrors } = require("./error-handler/error");
+app.use("/", api);
 
 app.use("/api/topics", topics);
 app.use("/api/comments", comments);
