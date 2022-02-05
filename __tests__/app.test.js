@@ -7,6 +7,25 @@ const app = require("../app");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
+describe("GET/ & GET/api", () => {
+  test("Return status:200 and welcome mesage", () => {
+    return request(app)
+      .get("/")
+      .expect(200)
+      .then(res => {
+        expect(res.body.msg).toBe("Welcome to the api");
+      });
+  });
+  test("Return status:200 and api info", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(res => {
+        console.log(res.body);
+        //expect(res.body.msg).toBe("Welcome to the api");
+      });
+  });
+});
 describe("/api/topics", () => {
   describe("GET", () => {
     test("status:200 and return an array of topics", () => {
