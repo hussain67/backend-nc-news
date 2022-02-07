@@ -21,7 +21,7 @@ describe("GET/ & GET/api", () => {
       .get("/api")
       .expect(200)
       .then(res => {
-        console.log(res.body);
+        //ssconsole.log(res.body);
         //expect(res.body.msg).toBe("Welcome to the api");
       });
   });

@@ -10,7 +10,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
@@ -22,23 +22,93 @@
           "body": "This is part two of a series on how to get up and running with Systemd and Node.js.",
           "created_at": "2020-11-07T06:03:00.000Z",
           "comment_count": "8"
+        },
+        {
+          "article_id": 7,
+          " title": "Z",
+          "body": "I was hungry.",
+          "votes": 0,
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "created_at": "2020-01-07T14:08:00.000Z",
+          "comment_count": "0"
         }
       ]
     }
   },
   "GET /api/articles/article_id": {
-    "description": ""
+    "description": "serves an object of the article with specified id",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 7,
+        "title": "Using React Native: One Year Later",
+        "body": "When I interviewed for the iOS developer opening at Discord last spring, the tech lead Stanislav told me: React Native is the future",
+        "topic": "coding",
+        "votes": 0,
+        "author": "jessjelly",
+        "created_at": "2020-11-07T06:03:00.000Z",
+        "comment_count": "8"
+      }
+    }
   },
   "PATCH /api/articles/article_id": {
-    "description": ""
+    "description": "Update the requested articles",
+    "exampleRequestBody": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 3,
+        "title": "Eight pug gifs that remind me of mitch",
+        "body": "some gifs",
+        "votes": 1,
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "created_at": "2020-11-03T09:12:00.000Z"
+      }
+    }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": ""
+    "description": "",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 10,
+          "author": "icellusedkars",
+          "article_id": 3,
+          " votes": 0,
+          "created_at": "2020-06-20T07:24:00.000Z",
+          "body": "git push origin master"
+        },
+        {
+          "comment_id": 11,
+          "author": "icellusedkars",
+          "article_id": 3,
+          "votes": 0,
+          "created_at": "2020-09-19T23:10:00.000Z",
+          " body": "Ambidextrous marsupial"
+        }
+      ]
+    }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": ""
+    "description": "Add a comment to the article with specific id",
+    "exampleRequestBody": {
+      "username": "butter_bridge",
+      "body": "excellent"
+    },
+    "exampleResponse": {
+      "comment_id": 19,
+      "author": "utter_bridge",
+      "article_id": 9,
+      "votes": 0,
+      "created_at": "2022-02-07T23:01:46.579Z",
+      "body": "excellent"
+    }
   },
   "DELETE /api/comments/:comment_id": {
-    "description": ""
+    "description": "Delete the requested comment",
+    "exampleResponse": "Status 204 - No Content, No body is returned by this endpoint."
   }
 }
