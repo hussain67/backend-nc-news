@@ -6,12 +6,15 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "coding", "description": "Code is love, code is life" }]
+      "topics": [
+        { "slug": "mitch", "description": "The man, the Mitch, the legend" },
+        { "slug": "cats", "description": "Not dogs" }
+      ]
     }
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["article_id", "title", "body", "votes", "created_at", "topic", "author", "comment_count"],
     "exampleResponse": {
       "articles": [
         {

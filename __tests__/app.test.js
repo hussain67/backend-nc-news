@@ -94,11 +94,11 @@ describe("/api/articles", () => {
 
     test("Return status: 200 and topics for correct topic", () => {
       return request(app)
-        .get("/api/articles?topic=mitch")
+        .get("/api/articles?topic=cats")
         .expect(200)
         .then(res => {
           res.body.articles.forEach(el => {
-            expect(el.topic).toBe("mitch");
+            expect(el.topic).toBe("cats");
           });
         });
     });
