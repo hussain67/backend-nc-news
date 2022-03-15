@@ -152,17 +152,31 @@ describe("/api/articles/:article_id", () => {
   });
 
   describe("PATCH", () => {
-    test("Return status: 200", () => {
+    test("Return status: 200 and increase votes by 1 for positive vote", () => {
       return request(app)
         .patch("/api/articles/3")
-        .send({ inc_votes: 10 })
+        .send({ inc_votes: 1 })
         .expect(200)
         .then(res => {
           let result = res.body.article;
           formattedResult = { article_id: result.article_id, votes: result.votes };
           expect(formattedResult).toEqual({
             article_id: 3,
-            votes: 10
+            votes: 1
+          });
+        });
+    });
+    test("Return status: 200 and decrease votes by 1 for negative vote", () => {
+      return request(app)
+        .patch("/api/articles/3")
+        .send({ inc_votes: -1 })
+        .expect(200)
+        .then(res => {
+          let result = res.body.article;
+          formattedResult = { article_id: result.article_id, votes: result.votes };
+          expect(formattedResult).toEqual({
+            article_id: 3,
+            votes: -1
           });
         });
     });
@@ -258,6 +272,52 @@ describe("/api/comments/:comment_id", () => {
         .expect(404)
         .then(res => {
           expect(res.body.msg).toBe("Not Found");
+        });
+    });
+  });
+  describe("PATCH", () => {
+    test("Return status: 200 and increase votes by 1 for positive vote", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(res => {
+          let result = res.body.comment;
+          formattedResult = { comment_id: result.comment_id, votes: result.votes };
+          expect(formattedResult).toEqual({
+            comment_id: 1,
+            votes: 17
+          });
+        });
+    });
+    test("Return status: 200 and decrease votes by 1 for negative vote", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -1 })
+        .expect(200)
+        .then(res => {
+          let result = res.body.comment;
+          formattedResult = { comment_id: result.comment_id, votes: result.votes };
+          expect(formattedResult).toEqual({
+            comment_id: 1,
+            votes: 15
+          });
+        });
+    });
+    test("Return status: 400 and an error message for invalid comment id", () => {
+      return request(app)
+        .patch("/api/comments/invalid_id")
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).toBe("Bad Request");
+        });
+    });
+    test("Return status: 404 and error message for id that does not exists ", () => {
+      return request(app)
+        .patch("/api/comments/99")
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).toBe("No article found with comment_id: 99");
         });
     });
   });
