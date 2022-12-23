@@ -22,8 +22,6 @@ Install Postgres App from "https://postgresapp.com".
 
 ## Additional files and contents
 
-In the `/db/setup.sql`, file provide names for the test and development database.
-
 Create .env.test and .env.development files in the project.
 
 In the .env.test file include `PGDATABASE = <test_database_name>` and in the .env>development file include` PGDATABASE = <development_database_name>`. These database names should be exactly same as in the `/db/setup.sql` file.
